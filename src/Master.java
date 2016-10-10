@@ -1,64 +1,101 @@
+/**
+ * Main process for Master
+ * @author Henrik Akesson & Fabien Salathe
+ */
+
+import java.io.IOException;
 import java.net.*;
 import java.util.concurrent.TimeUnit;
 
 public class Master {
-    public static boolean keepRunning = true;
 
-    public static int numberOfSlaves = 3;
+    // Number of slaves to listen to
+    private static int numberOfSlaves = 3;
 
-    public static void main(String[] args) throws Exception {
-        InetAddress group = InetAddress.getByName("228.5.6.7");
+    // Byte array that will be used for DatagramPackets
+    private static byte[] bytes = new byte[Long.BYTES];
 
-        MulticastSocket socket = new MulticastSocket(4446);
-        byte[] buff;
-        DatagramPacket packet;
+    // Stores the master process time
+    private static long masterTime;
 
+    // Stores the largest time difference between slaves
+    private static long delta;
 
-        long[] times = new long[numberOfSlaves];
-        while (keepRunning) {
-            // Step 1 : Send Master time to slaves
-            long masterTime = System.nanoTime();
-            buff = ByteUtils.longToBytes(masterTime);
-            packet = new DatagramPacket(buff, buff.length, group, 4445);
-            socket.send(packet);
+    // Group socket, used to communicate to all Slaves
+    private static MulticastSocket socket;
+    private static InetAddress group;
 
+    // DatagramPacket that is used throughout the process
+    private static DatagramPacket packet;
 
-            // Recevoir horloge
-            for (int i = 0; i < numberOfSlaves; i++) {
+    // long array that stores all Slaves' times
+    private static long[] times;
 
-                socket.receive(packet);
+    public static void main(String[] args) throws IOException, InterruptedException {
 
-                System.out.println("Received deltas");
+        group = InetAddress.getByName("228.5.6.7");
+        socket = new MulticastSocket(4446);
+        packet = new DatagramPacket(bytes, bytes.length);
+        times = new long[numberOfSlaves];
 
-                long time = ByteUtils.bytesToLong(packet.getData());
+        while (true) {
 
-                times[i] = time;
-            }
+            masterTime = System.nanoTime();
 
+            delta = 0;
 
-            //Calcul
-            long delta = calcDelta(times);
+            sendTimes();
+
+            listenForTimes();
+            System.out.println("Received deltas");
+
+            delta = calcDelta(times);
+
             System.out.println("Largest delta = " + delta);
 
-            //Renvoyer le temps
-            byte[] bytes = ByteUtils.longToBytes(masterTime + delta);
-            socket.send(new DatagramPacket(bytes, bytes.length, group, 4445));
-            if(!keepRunning) {
-                bytes = ByteUtils.longToBytes(-1);
-                socket.send(new DatagramPacket(bytes, bytes.length, group, 4445));
-            }
+            sendTimes();
+
+            // Wait for a while
             TimeUnit.SECONDS.sleep(4);
         }
-        //socket.close();
     }
 
+    /**
+     * Listens for and stores all Slave's times
+     *
+     * @throws IOException
+     */
+    private static void listenForTimes() throws IOException {
+        for (int i = 0; i < numberOfSlaves; i++) {
+            socket.receive(packet);
+            long time = ByteUtils.bytesToLong(packet.getData());
+            times[i] = time;
+        }
+    }
+
+    /**
+     * Returns the largest time in the array.
+     *
+     * @param times
+     * @return the largest time in the array
+     */
     private static long calcDelta(long[] times) {
-        long delta = times[0];
+        long deltaTmp = times[0];
         for (long time : times) {
             System.out.println("Delta = " + time);
-            if (time > delta)
-                delta = time;
+            if (time > deltaTmp)
+                deltaTmp = time;
         }
-        return delta;
+        return deltaTmp;
+    }
+
+    /**
+     * Sends Master's system time + delta through Multicast to all Slaves
+     *
+     * @throws IOException
+     */
+    private static void sendTimes() throws IOException {
+        bytes = ByteUtils.longToBytes(masterTime + delta);
+        socket.send(new DatagramPacket(bytes, bytes.length, group, 4445));
     }
 }
