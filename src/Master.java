@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 public class Master {
 
     // Number of slaves to listen to
-    private static int numberOfSlaves = 3;
+    private static final int numberOfSlaves = 3;
 
     // Byte array that will be used for DatagramPackets
     private static byte[] bytes = new byte[Long.BYTES];
@@ -31,10 +31,18 @@ public class Master {
     // long array that stores all Slaves' times
     private static long[] times;
 
+    // Address to use for multicast
+    private static final String MULTICAST_HOST = "228.5.6.7";
+
+    // Port to use for multicast
+    private static final int LISTEN_PORT = 4446;
+
+    private static final int MULTICAST_PORT = 4445;
+
     public static void main(String[] args) throws IOException, InterruptedException {
 
-        group = InetAddress.getByName("228.5.6.7");
-        socket = new MulticastSocket(4446);
+        group = InetAddress.getByName(MULTICAST_HOST);
+        socket = new MulticastSocket(LISTEN_PORT);
         packet = new DatagramPacket(bytes, bytes.length);
         times = new long[numberOfSlaves];
 
@@ -96,6 +104,6 @@ public class Master {
      */
     private static void sendTimes() throws IOException {
         bytes = ByteUtils.longToBytes(masterTime + delta);
-        socket.send(new DatagramPacket(bytes, bytes.length, group, 4445));
+        socket.send(new DatagramPacket(bytes, bytes.length, group, MULTICAST_PORT));
     }
 }

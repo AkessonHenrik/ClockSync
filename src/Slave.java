@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.net.*;
 
 public class Slave {
-    
+
     private static long delta;
     private static MulticastSocket socket;
     private static InetAddress group;
@@ -15,14 +15,18 @@ public class Slave {
     private static long masterTime;
     private static long localTime;
     private static DatagramPacket packet;
+    private static final String MASTER_HOST = "localhost";
+    private static final int MASTER_PORT = 4446;
+    private static final int MULTICAST_PORT = 4445;
+    private static final String MULTICAST_HOST = "228.5.6.7";
 
     public static void main(String[] args) throws Exception {
         delta = 0;
-        socket = new MulticastSocket(4445);
+        socket = new MulticastSocket(MULTICAST_PORT);
 
-        group = InetAddress.getByName("228.5.6.7"); // changer si autre machine
+        group = InetAddress.getByName(MULTICAST_HOST);
 
-        packet = new DatagramPacket(bytes, bytes.length, InetAddress.getByName("localhost"), 4446);
+        packet = new DatagramPacket(bytes, bytes.length, InetAddress.getByName(MASTER_HOST), MASTER_PORT);
 
         socket.joinGroup(group);
 
@@ -31,10 +35,8 @@ public class Slave {
             // Step 1 : Wait for master time
             listenForMasterTime();
 
-
             // Step 2 : Calculate difference between master time and local time
             localTime = System.nanoTime() + delta;
-
 
             // Step 3 : send the difference to master
             sendTimeToMaster();
@@ -42,7 +44,6 @@ public class Slave {
             // Step 4 : Wait for official delta
             listenForMasterTime();
             delta = masterTime - localTime;
-
 
             // Step 5 : Change local time
             System.out.println("Adjusted delta = " + delta);
@@ -57,16 +58,15 @@ public class Slave {
     }
 
     private static void sendTimeToMaster() throws IOException {
+
         delta = localTime - masterTime;
         System.out.println("Local Time = " + localTime);
         System.out.println("Delta = " + delta);
 
         bytes = ByteUtils.longToBytes(delta);
 
-        packet = new DatagramPacket(bytes, bytes.length, InetAddress.getByName("localhost"), 4446);
+        packet = new DatagramPacket(bytes, bytes.length, InetAddress.getByName(MASTER_HOST), MASTER_PORT);
         socket.send(packet);
 
     }
-
-
 }
