@@ -1,1 +1,10 @@
 # Created by .ignore support plugin (hsz.mobi)
+.idea
+out
+/out/
+/.idea/
+/out
+/.idea
+out/
+.idea/
+ClockSync.iml
