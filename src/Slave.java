@@ -1,5 +1,6 @@
 /**
  * Main process for Slave
+ *
  * @author Henrik Akesson & Fabien Salathe
  */
 
@@ -46,19 +47,23 @@ public class Slave {
 
     private static final Logger LOGGER = Logger.getLogger(Slave.class.getName());
 
+    private static String masterHost;
+
     public static void main(String[] args) throws Exception {
+        masterHost = MASTER_HOST;
+        if (args.length > 0) {
+            masterHost = args[1];
+        }
 
         // We initialize the delay to 0
         delta = 0;
         socket = new MulticastSocket(MULTICAST_PORT);
 
-        group = InetAddress.getByName(MULTICAST_HOST);
+        group = InetAddress.getByName(masterHost);
 
-        packet = new DatagramPacket(bytes, bytes.length, InetAddress.getByName(MASTER_HOST), MASTER_PORT);
+        packet = new DatagramPacket(bytes, bytes.length, InetAddress.getByName(masterHost), MASTER_PORT);
 
         socket.joinGroup(group);
-        Random r = new Random();
-        int n = r.nextInt();
 
         while (true) {
 
@@ -105,7 +110,7 @@ public class Slave {
         LOGGER.log(Level.INFO, "Delta = {0}", delta);
         bytes = ByteUtils.longToBytes(delta);
 
-        packet = new DatagramPacket(bytes, bytes.length, InetAddress.getByName(MASTER_HOST), MASTER_PORT);
+        packet = new DatagramPacket(bytes, bytes.length, InetAddress.getByName(masterHost), MASTER_PORT);
         socket.send(packet);
 
     }
