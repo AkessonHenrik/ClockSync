@@ -50,8 +50,9 @@ public class Slave {
     private static String masterHost;
 
     public static void main(String[] args) throws Exception {
+
         masterHost = MASTER_HOST;
-        if (args.length > 0) {
+        if (args.length > 1) {
             masterHost = args[1];
         }
 
@@ -59,7 +60,7 @@ public class Slave {
         delta = 0;
         socket = new MulticastSocket(MULTICAST_PORT);
 
-        group = InetAddress.getByName(masterHost);
+        group = InetAddress.getByName(MULTICAST_HOST);
 
         packet = new DatagramPacket(bytes, bytes.length, InetAddress.getByName(masterHost), MASTER_PORT);
 
