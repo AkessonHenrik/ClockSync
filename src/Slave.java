@@ -6,6 +6,8 @@
 import java.io.*;
 import java.net.*;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Slave {
 
@@ -42,6 +44,8 @@ public class Slave {
     // Multicast address
     private static final String MULTICAST_HOST = "228.5.6.7";
 
+    private static final Logger LOGGER = Logger.getLogger(Slave.class.getName());
+
     public static void main(String[] args) throws Exception {
 
         // We initialize the delay to 0
@@ -55,7 +59,6 @@ public class Slave {
         socket.joinGroup(group);
         Random r = new Random();
         int n = r.nextInt();
-        PrintWriter writer = new PrintWriter(new BufferedOutputStream(new FileOutputStream("Slave" + n +".txt")));
 
         while (true) {
 
@@ -73,12 +76,8 @@ public class Slave {
             delta = masterTime - localTime;
 
             // Step 5 : Change local time
-            System.out.println("Adjusted delta = " + delta);
-            long printTime = System.nanoTime() + delta;
-            writer.println(printTime);
-            writer.flush();
-            System.out.println("Time is : " + (printTime));
-
+            LOGGER.log(Level.INFO, "Adjusted delta = {0}", delta);
+            LOGGER.log(Level.INFO, "Time is : {0}", System.nanoTime() + delta);
         }
     }
 
@@ -89,7 +88,7 @@ public class Slave {
     private static void listenForMasterTime() throws IOException {
         socket.receive(packet);
         masterTime = ByteUtils.bytesToLong(packet.getData());
-        System.out.println("Received master time = " + masterTime);
+        LOGGER.log(Level.INFO, "Received master time = {0}", masterTime);
     }
 
     /**
@@ -99,9 +98,8 @@ public class Slave {
     private static void sendTimeToMaster() throws IOException {
 
         delta = localTime - masterTime;
-        System.out.println("Local Time = " + localTime);
-        System.out.println("Delta = " + delta);
-
+        LOGGER.log(Level.INFO, "Local time = {0}", localTime);
+        LOGGER.log(Level.INFO, "Delta = {0}", delta);
         bytes = ByteUtils.longToBytes(delta);
 
         packet = new DatagramPacket(bytes, bytes.length, InetAddress.getByName(MASTER_HOST), MASTER_PORT);

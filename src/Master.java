@@ -6,6 +6,7 @@
 import java.io.IOException;
 import java.net.*;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.*;
 
 import static java.lang.Math.max;
 
@@ -41,6 +42,7 @@ public class Master {
 
     private static final int MULTICAST_PORT = 4445;
 
+    private static final Logger LOGGER = Logger.getLogger(Master.class.getName());
     public static void main(String[] args) throws IOException, InterruptedException {
 
         group = InetAddress.getByName(MULTICAST_HOST);
@@ -57,11 +59,12 @@ public class Master {
             sendTimes();
 
             listenForTimes();
-            System.out.println("Received deltas");
+            LOGGER.log(Level.INFO, "Received deltas");
+
 
             delta = calcDelta(times);
 
-            System.out.println("Largest delta = " + delta);
+            LOGGER.log(Level.INFO, "Largest delta = {0}", delta);
 
             sendTimes();
 
@@ -92,7 +95,7 @@ public class Master {
     private static long calcDelta(long[] times) {
         long deltaTmp = times[0];
         for (long time : times) {
-            System.out.println("Delta = " + time);
+            LOGGER.log(Level.INFO, "Delta = {0}", time);
             if (time > deltaTmp)
                 deltaTmp = time;
         }
