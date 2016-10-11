@@ -3,8 +3,9 @@
  * @author Henrik Akesson & Fabien Salathe
  */
 
-import java.io.IOException;
+import java.io.*;
 import java.net.*;
+import java.util.Random;
 
 public class Slave {
 
@@ -52,6 +53,9 @@ public class Slave {
         packet = new DatagramPacket(bytes, bytes.length, InetAddress.getByName(MASTER_HOST), MASTER_PORT);
 
         socket.joinGroup(group);
+        Random r = new Random();
+        int n = r.nextInt();
+        PrintWriter writer = new PrintWriter(new BufferedOutputStream(new FileOutputStream("Slave" + n +".txt")));
 
         while (true) {
 
@@ -70,7 +74,11 @@ public class Slave {
 
             // Step 5 : Change local time
             System.out.println("Adjusted delta = " + delta);
-            System.out.println("Time is : " + (System.nanoTime() + delta));
+            long printTime = System.nanoTime() + delta;
+            writer.println(printTime);
+            writer.flush();
+            System.out.println("Time is : " + (printTime));
+
         }
     }
 

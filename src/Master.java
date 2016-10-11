@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.net.*;
 import java.util.concurrent.TimeUnit;
 
+import static java.lang.Math.max;
+
 public class Master {
 
     // Number of slaves to listen to
@@ -64,7 +66,7 @@ public class Master {
             sendTimes();
 
             // Wait for a while
-            TimeUnit.SECONDS.sleep(4);
+            TimeUnit.SECONDS.sleep(1);
         }
     }
 
@@ -94,7 +96,8 @@ public class Master {
             if (time > deltaTmp)
                 deltaTmp = time;
         }
-        return deltaTmp;
+        // Delay can't be lowered, or (at least) one Slave will go back in time
+        return max(delta, deltaTmp);
     }
 
     /**
