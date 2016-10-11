@@ -1,6 +1,6 @@
 /**
  * Class used to convert doubles to byte arrays and vice versa
- * Source: <url>
+ * Source: http://stackoverflow.com/questions/4485128/how-do-i-convert-long-to-byte-and-back-in-java
  * @author Henrik Akesson & Fabien Salathe
  */
 
