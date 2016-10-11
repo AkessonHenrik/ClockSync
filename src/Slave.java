@@ -8,19 +8,42 @@ import java.net.*;
 
 public class Slave {
 
+
+    // Delay to add when sending time to Master
     private static long delta;
+
+    // Multicast group
     private static MulticastSocket socket;
     private static InetAddress group;
-    private static byte[] bytes = new byte[Long.BYTES];
-    private static long masterTime;
-    private static long localTime;
+
+    // DatagramPacket used for all communications
     private static DatagramPacket packet;
+
+    // Byte array that will be used to store DatagramPacket contents
+    private static byte[] bytes = new byte[Long.BYTES];
+
+    // Stores time sent by master
+    private static long masterTime;
+
+
+    // Stores local time
+    private static long localTime;
+
+    // Master host, change if different devices
     private static final String MASTER_HOST = "localhost";
+
+    // Master port
     private static final int MASTER_PORT = 4446;
+
+    // Multicast port
     private static final int MULTICAST_PORT = 4445;
+
+    // Multicast address
     private static final String MULTICAST_HOST = "228.5.6.7";
 
     public static void main(String[] args) throws Exception {
+
+        // We initialize the delay to 0
         delta = 0;
         socket = new MulticastSocket(MULTICAST_PORT);
 
@@ -51,12 +74,20 @@ public class Slave {
         }
     }
 
+    /**
+     * Waits for DatagramPacket from Master and extracts its content
+     * @throws IOException
+     */
     private static void listenForMasterTime() throws IOException {
         socket.receive(packet);
         masterTime = ByteUtils.bytesToLong(packet.getData());
         System.out.println("Received master time = " + masterTime);
     }
 
+    /**
+     * Calculates delay and sends it to Master
+     * @throws IOException
+     */
     private static void sendTimeToMaster() throws IOException {
 
         delta = localTime - masterTime;
