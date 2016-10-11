@@ -79,6 +79,9 @@ public class Slave {
             LOGGER.log(Level.INFO, "Adjusted delta = {0}", delta);
             LOGGER.log(Level.INFO, "Time is : {0}", System.nanoTime() + delta);
         }
+//        Will never be reached because of the while(true) loop but should not be forgotten
+//        socket.leaveGroup(group);
+//        socket.close();
     }
 
     /**

@@ -71,6 +71,9 @@ public class Master {
             // Wait for a while
             TimeUnit.SECONDS.sleep(1);
         }
+//        Will never be reached because of the while(true) loop but should not be forgotten
+//        socket.leaveGroup(group);
+//        socket.close();
     }
 
     /**
