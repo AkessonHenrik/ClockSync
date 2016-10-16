@@ -13,7 +13,7 @@ import static java.lang.Math.max;
 public class Master {
 
     // Number of slaves to listen to
-    private static final int numberOfSlaves = 3;
+    private static final int numberOfSlaves = 1;
 
     // Byte array that will be used for DatagramPackets
     private static byte[] bytes = new byte[Long.BYTES];
@@ -35,7 +35,7 @@ public class Master {
     private static long[] times;
 
     // Address to use for multicast
-    private static final String MULTICAST_HOST = "228.5.6.7";
+    private static final String MULTICAST_HOST = "224.0.0.1";
 
     // Port to use for multicast
     private static final int LISTEN_PORT = 4446;
