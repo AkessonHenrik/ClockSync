@@ -34,7 +34,7 @@ public class Slave {
     private static long localTime;
 
     // Master host, change if different devices
-    private static final String MASTER_HOST = "localhost";
+    private static final String MASTER_HOST = "192.168.1.118";
 
     // Master port
     private static final int MASTER_PORT = 4446;
@@ -43,7 +43,7 @@ public class Slave {
     private static final int MULTICAST_PORT = 4445;
 
     // Multicast address
-    private static final String MULTICAST_HOST = "228.5.6.7";
+    private static final String MULTICAST_HOST = "224.0.0.1";
 
     private static final Logger LOGGER = Logger.getLogger(Slave.class.getName());
 
@@ -52,9 +52,9 @@ public class Slave {
     public static void main(String[] args) throws Exception {
 
         masterHost = MASTER_HOST;
-        if (args.length > 1) {
-            masterHost = args[1];
-        }
+        //if (args.length > 1) {
+          //  masterHost = args[1];
+        //}
 
         // We initialize the delay to 0
         delta = 0;
