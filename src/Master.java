@@ -13,7 +13,7 @@ import static java.lang.Math.max;
 public class Master {
 
     // Number of slaves to listen to
-    private static final int numberOfSlaves = 1;
+    private static final int numberOfSlaves = 3;
 
     // Byte array that will be used for DatagramPackets
     private static byte[] bytes = new byte[Long.BYTES];

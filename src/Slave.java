@@ -6,7 +6,6 @@
 
 import java.io.*;
 import java.net.*;
-import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -34,7 +33,7 @@ public class Slave {
     private static long localTime;
 
     // Master host, change if different devices
-    private static final String MASTER_HOST = "192.168.1.118";
+    private static final String MASTER_HOST = "localhost";
 
     // Master port
     private static final int MASTER_PORT = 4446;
@@ -52,9 +51,9 @@ public class Slave {
     public static void main(String[] args) throws Exception {
 
         masterHost = MASTER_HOST;
-        //if (args.length > 1) {
-          //  masterHost = args[1];
-        //}
+        if (args.length > 1) {
+            masterHost = args[1];
+        }
 
         // We initialize the delay to 0
         delta = 0;
