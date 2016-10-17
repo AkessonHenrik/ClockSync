@@ -13,7 +13,8 @@ import static java.lang.Math.max;
 public class Master {
 
     // Number of slaves to listen to
-    private static final int numberOfSlaves = 3;
+    private static final int NUMBER_OF_SLAVES = 3;
+    private static int numberOfSlaves;
 
     // Byte array that will be used for DatagramPackets
     private static byte[] bytes = new byte[Long.BYTES];
@@ -45,6 +46,12 @@ public class Master {
     private static final Logger LOGGER = Logger.getLogger(Master.class.getName());
 
     public static void main(String[] args) throws IOException, InterruptedException {
+        // Master host can be passed as an argument
+        numberOfSlaves = NUMBER_OF_SLAVES;
+        if (args.length > 0) {
+            numberOfSlaves = Integer.parseInt(args[0]);
+            System.out.println(numberOfSlaves);
+        }
         group = InetAddress.getByName(MULTICAST_HOST);
         socket = new MulticastSocket(LISTEN_PORT);
         packet = new DatagramPacket(bytes, bytes.length);
