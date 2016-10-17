@@ -43,15 +43,14 @@ public class Master {
     private static final int MULTICAST_PORT = 4445;
 
     private static final Logger LOGGER = Logger.getLogger(Master.class.getName());
-    public static void main(String[] args) throws IOException, InterruptedException {
 
+    public static void main(String[] args) throws IOException, InterruptedException {
         group = InetAddress.getByName(MULTICAST_HOST);
         socket = new MulticastSocket(LISTEN_PORT);
         packet = new DatagramPacket(bytes, bytes.length);
         times = new long[numberOfSlaves];
 
         while (true) {
-
             masterTime = System.nanoTime();
 
             delta = 0;
@@ -60,7 +59,6 @@ public class Master {
 
             listenForTimes();
             LOGGER.log(Level.INFO, "Received deltas");
-
 
             delta = calcDelta(times);
 
@@ -71,6 +69,7 @@ public class Master {
             // Wait for a while
             TimeUnit.SECONDS.sleep(1);
         }
+
 //        Will never be reached because of the while(true) loop but should not be forgotten
 //        socket.leaveGroup(group);
 //        socket.close();

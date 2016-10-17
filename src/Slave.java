@@ -11,7 +11,6 @@ import java.util.logging.Logger;
 
 public class Slave {
 
-
     // Delay to add when sending time to Master
     private static long delta;
 
@@ -27,7 +26,6 @@ public class Slave {
 
     // Stores time sent by master
     private static long masterTime;
-
 
     // Stores local time
     private static long localTime;
@@ -50,6 +48,7 @@ public class Slave {
 
     public static void main(String[] args) throws Exception {
 
+        // Master host can be passed as an argument
         masterHost = MASTER_HOST;
         if (args.length > 1) {
             masterHost = args[1];
@@ -66,7 +65,6 @@ public class Slave {
         socket.joinGroup(group);
 
         while (true) {
-
             // Step 1 : Wait for master time
             listenForMasterTime();
 
@@ -84,6 +82,7 @@ public class Slave {
             LOGGER.log(Level.INFO, "Adjusted delta = {0}", delta);
             LOGGER.log(Level.INFO, "Time is : {0}", System.nanoTime() + delta);
         }
+
 //        Will never be reached because of the while(true) loop but should not be forgotten
 //        socket.leaveGroup(group);
 //        socket.close();
@@ -104,7 +103,6 @@ public class Slave {
      * @throws IOException
      */
     private static void sendTimeToMaster() throws IOException {
-
         delta = localTime - masterTime;
         LOGGER.log(Level.INFO, "Local time = {0}", localTime);
         LOGGER.log(Level.INFO, "Delta = {0}", delta);
@@ -112,6 +110,5 @@ public class Slave {
 
         packet = new DatagramPacket(bytes, bytes.length, InetAddress.getByName(masterHost), MASTER_PORT);
         socket.send(packet);
-
     }
 }
