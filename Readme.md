@@ -29,3 +29,6 @@ Example:
 ```
 java Master 2
 ```
+
+### Important
+**Slaves** need to be started before the **Master** instance
